@@ -1,0 +1,363 @@
+# Stash 懒人配置XiaoMao版 - 通用型 中文版 【作者】XiaoMao
+# 最近更新时间 202305015
+# 懒人版本 @1.0
+
+# ⚠️⚠️⚠️⚠️⚠️⚠️版本说明，记得务必看完⚠️⚠️⚠️⚠️⚠️⚠️
+
+# 小版本更新请查看更新日志 ｜ 或加入xiaomao组织⬇️
+# 微信公众号 【小帽集团】
+# XiaoMao · Tg频道频道：https://t.me/xiaomaoJT
+# XiaoMao · GitHub仓库：https://github.com/xiaomaoJT/QxScript
+
+# 规则模式：rule（规则） / global（全局代理）/ direct（全局直连）
+mode: rule
+
+# 设置日志输出级别 (默认级别：silent，即不输出任何内容，以避免因日志内容过大而导致程序内存溢出）。
+# 5 个级别：silent / info / warning / error / debug。级别越高日志输出量越大，越倾向于调试，若需要请自行开启。
+log-level: info
+
+# HTTP 引擎相关
+http:
+  # 强制使用 HTTP 引擎处理 TCP 连接
+  # 捕获后的连接可以使用高级功能，例如重写和脚本
+  force-http-engine:
+    - "*:80"
+    - "*:4480" # BiliBili CDN
+    - "*:9102" # BiliBili CDN
+
+  # 以 PKCS #12 编码的 CA 证书
+  ca: ""
+  # 证书密码
+  ca-passphrase: ""
+
+# 支持通配符域名 (例如: *.clash.dev, *.foo.*.example.com )
+# 不使用通配符的域名优先级高于使用通配符的域名 (例如: foo.example.com > *.example.com > .example.com )
+# 注意: +.foo.com 的效果等同于 .foo.com 和 foo.com
+hosts:
+  "*.clash.dev": 127.0.0.1
+  ".dev": 127.0.0.1
+  "alpha.clash.dev": "::1"
+
+# DNS 服务器配置
+dns:
+  # 以下填写的 DNS 服务器将会被用来解析 DNS 服务的域名
+  # 仅填写 DNS 服务器的 IP 地址
+  default-nameserver:
+    - 223.5.5.5
+    - 114.114.114.114
+    - system # 使用 iOS 系统 DNS
+  # 支持 UDP / TCP / DoT / DoH 协议的 DNS 服务，可以指明具体的连接端口号。
+  # 所有 DNS 请求将会直接发送到服务器，不经过任何代理。
+  # Stash 会使用最先获得的解析记录回复 DNS 请求
+  nameserver:
+    # 不建议配置超过 2 个 DNS 服务器，会增加系统功耗
+    - https://doh.pub/dns-query
+    - https://dns.alidns.com/dns-query
+    # - quic://dns.adguard.com:853
+    # - doq://test.dns.nextdns.io:853
+    - system # 使用 iOS 系统 DNS
+
+  # 跳过证书验证，解决部分兼容性问题 https://help.nextdns.io/t/g9hdkjz
+  skip-cert-verify: true
+
+  # 对部分域名使用单独的 DNS 服务器
+  nameserver-policy:
+    "www.baidu.com": 114.114.114.114
+    "+.internal.crop.com": system
+
+  # 在以下列表的域名将不会被解析为 fake ip，这些域名相关的解析请求将会返回它们真实的 IP 地址
+  fake-ip-filter:
+    # from: https://github.com/Kr328/ClashForAndroid/blob/ffa559a57102ed8bc20eba41aa236a7764741bf9/core/src/main/golang/native/config/defaults.go#L10
+
+    # Stun Services
+    - "+.stun.*.*"
+    - "+.stun.*.*.*"
+    - "+.stun.*.*.*.*"
+    - "+.stun.*.*.*.*.*"
+
+    # Google Voices
+    - "lens.l.google.com"
+
+    # Nintendo Switch
+    - "*.n.n.srv.nintendo.net"
+
+    # PlayStation
+    - "+.stun.playstation.net"
+
+    # XBox
+    - "xbox.*.*.microsoft.com"
+    - "*.*.xboxlive.com"
+
+    # Microsoft
+    - "*.msftncsi.com"
+    - "*.msftconnecttest.com"
+
+    # Bilibili CDN
+    - "*.mcdn.bilivideo.cn"
+
+proxies:
+  # shadowsocks
+  # 支持加密方式：
+  #   aes-128-gcm aes-192-gcm aes-256-gcm
+  #   aes-128-cfb aes-192-cfb aes-256-cfb
+  #   aes-128-ctr aes-192-ctr aes-256-ctr
+  #   rc4-md5 chacha20 chacha20-ietf xchacha20
+  #   chacha20-ietf-poly1305 xchacha20-ietf-poly1305
+
+  # vmess
+  # 支持加密方式：auto / aes-128-gcm / chacha20-poly1305 / none
+
+  # socks5
+  # http
+  # snell
+  # Trojan
+  # hysteria https://github.com/HyNetwork/hysteria/wiki/%E9%AB%98%E7%BA%A7%E7%94%A8%E6%B3%95
+
+  # ShadowsocksR
+  # 支持的加密方式: SS 中支持的所有流加密方式
+  # 支持的混淆方式:
+  #   plain http_simple http_post
+  #   random_head tls1.2_ticket_auth tls1.2_ticket_fastauth
+  # 支持的协议:
+  #   origin auth_sha1_v4 auth_aes128_md5
+  #   auth_aes128_sha1 auth_chain_a auth_chain_b
+
+proxy-groups:
+  # relay 代理的转发链, 在 proxies 中不应该包含 relay. 不支持 UDP.
+  # 流量: clash <-> http <-> vmess <-> ss1 <-> ss2 <-> 互联网
+
+  # url-test 可以自动选择延迟最短的服务器
+  # fallback 可以尽量按照用户书写的服务器顺序，在确保服务器可用的情况下，自动选择服务器
+  # load-balance 可以使相同 eTLD 请求在同一条代理线路上
+  # select 用来允许用户手动选择 代理服务器 或 服务器组
+  # 您也可以使用 RESTful API 去切换服务器，这种方式推荐在 GUI 中使用
+
+  # 基于 SSID 的策略，方便在特殊网络环境下使用特定的代理
+  # - name: ssid-group
+  #   type: select # 类型必须为 select，兼容原版 clash 配置
+  #   proxies:
+  #     - ss1
+  #     - ss2
+  #     - DIRECT
+  #   ssid-policy:
+  #     # 在 SSID 为 office 的 Wi-Fi 中自动切换为 ss1 策略
+  #     # 在 SSID 为 home 的 Wi-Fi 中自动切换为 ss2 策略
+  #     # 在蜂窝数据中自动切换为 ss3 策略
+  #     # 其他的 SSID 默认为 DIRECT
+  #     office: ss1
+  #     home: ss2
+  #     cellular: ss3
+  #     default: DIRECT
+
+  - icon: https://raw.githubusercontent.com/xiaomaoJT/QxScript/main/lazy/icon/Final.png
+    name: 全球策略
+    proxies:
+      - 自动节点
+      - 手动节点
+      - 香港节点
+      - 台湾节点
+      - 日本节点
+      - 新加坡节点
+      - 美国节点
+      - 韩国节点
+      - 英国节点
+      - DIRECT
+    type: select
+  - icon: https://raw.githubusercontent.com/xiaomaoJT/QxScript/main/lazy/icon/Spotify.png
+    name: Spotify服务
+    proxies:
+      - 自动节点
+      - 手动节点
+      - 香港节点
+      - 台湾节点
+      - 日本节点
+      - 新加坡节点
+      - 美国节点
+      - 韩国节点
+      - 英国节点
+      - DIRECT
+    type: select
+  - icon: https://raw.githubusercontent.com/Semporia/Hand-Painted-icon/master/Social_Media/Delicious.png
+    name: Bing服务
+    proxies:
+      - 自动节点
+      - 手动节点
+      - 香港节点
+      - 台湾节点
+      - 日本节点
+      - 新加坡节点
+      - 美国节点
+      - 韩国节点
+      - 英国节点
+      - DIRECT
+    type: select
+  - icon: https://raw.githubusercontent.com/xiaomaoJT/QxScript/main/lazy/icon/Microsoft.png
+    name: 微软服务
+    proxies:
+      - 自动节点
+      - 手动节点
+      - 香港节点
+      - 台湾节点
+      - 日本节点
+      - 新加坡节点
+      - 美国节点
+      - 韩国节点
+      - 英国节点
+      - DIRECT
+    type: select
+  - icon: https://raw.githubusercontent.com/xiaomaoJT/QxScript/main/lazy/icon/Google_Search.png
+    name: 谷歌服务
+    proxies:
+      - 自动节点
+      - 手动节点
+      - 香港节点
+      - 台湾节点
+      - 日本节点
+      - 新加坡节点
+      - 美国节点
+      - 韩国节点
+      - 英国节点
+    type: select
+
+  - filter: "🇭🇰|港|HK|(?i)Hong"
+    icon: https://raw.githubusercontent.com/xiaomaoJT/QxScript/main/lazy/icon/city/u/HK.png
+    include-all: true
+    interval: 2400
+    lazy: true
+    name: 香港节点
+    tolerance: 50
+    type: url-test
+  - filter: "台|TW|(?i)Taiwan"
+    icon: https://raw.githubusercontent.com/xiaomaoJT/QxScript/main/lazy/icon/city/u/CN.png
+    include-all: true
+    interval: 2400
+    lazy: true
+    name: 台湾节点
+    tolerance: 50
+    type: url-test
+  - filter: "🇯🇵|日本|JP|(?i)Japan"
+    icon: https://raw.githubusercontent.com/xiaomaoJT/QxScript/main/lazy/icon/city/u/JP.png
+    include-all: true
+    interval: 2400
+    lazy: true
+    name: 日本节点
+    tolerance: 50
+    type: url-test
+  - filter: "🇸🇬|新加坡|狮城|SG|(?i)Singapore"
+    icon: https://raw.githubusercontent.com/xiaomaoJT/QxScript/main/lazy/icon/city/u/SG.png
+    include-all: true
+    interval: 2400
+    lazy: true
+    name: 新加坡节点
+    tolerance: 50
+    type: url-test
+  - filter: "🇺🇸|美国|美國|US|洛杉矶|西雅图|(?i)States|American"
+    icon: https://raw.githubusercontent.com/xiaomaoJT/QxScript/main/lazy/icon/city/u/US.png
+    include-all: true
+    interval: 2400
+    lazy: true
+    name: 美国节点
+    tolerance: 50
+    type: url-test
+  - filter: "🇰🇷|KR|Korea|KOR|首尔|韩|韓|(?i)Korea"
+    icon: https://raw.githubusercontent.com/xiaomaoJT/QxScript/main/lazy/icon/city/u/KR.png
+    include-all: true
+    interval: 2400
+    lazy: true
+    name: 韩国节点
+    tolerance: 50
+    type: url-test
+  - filter: "🇬🇧|英|英国|英國|大不列颠及北爱尔兰联合王国|联合王国|伦敦|UK|(?i)Britain|United Kingdom"
+    icon: https://raw.githubusercontent.com/xiaomaoJT/QxScript/main/lazy/icon/city/u/UK.png
+    include-all: true
+    interval: 2400
+    lazy: true
+    name: 英国节点
+    tolerance: 50
+    type: url-test
+
+  - icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Auto.png
+    include-all: true
+    interval: 2400
+    lazy: true
+    name: 自动节点
+    tolerance: 50
+    type: url-test
+  - icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Available.png
+    include-all: true
+    interval: 2400
+    lazy: true
+    name: 手动节点
+    type: select
+
+proxy-providers:
+  XiaoMao永久订阅:
+    interval: 4800
+    url: https://gist.githubusercontent.com/xiaomaoJT/921025f761277153bebb30abde7f784f/raw/XiaoMao-FE-Clash
+
+rule-providers:
+  # domain
+  # domain-text 推荐
+  # ipcidr
+  # ipcidr-text
+  # classical
+  ShuntCorrection:
+    behavior: classical
+    url: https://raw.githubusercontent.com/xiaomaoJT/QxScript/main/filter/ShuntCorrection.yaml
+    interval: 86400
+  Direct:
+    behavior: classical
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Direct/Direct.yaml
+    interval: 86400
+  AdvertisingLite:
+    behavior: classical
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AdvertisingLite/AdvertisingLite_Classical.yaml
+    interval: 86400
+  Hijacking:
+    behavior: classical
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Hijacking/Hijacking.yaml
+    interval: 86400
+  Privacy:
+    behavior: classical
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Privacy/Privacy_Classical.yaml
+    interval: 86400
+  Microsoft:
+    behavior: classical
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Microsoft/Microsoft.yaml
+    interval: 86400
+  Spotify:
+    type: "http"
+    behavior: "classical"
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Spotify/Spotify.yaml"
+    interval: 86400
+  Bing:
+    behavior: classical
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Bing/Bing.yaml
+    interval: 86400
+  Google:
+    behavior: classical
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Google/Google.yaml
+    interval: 86400
+  Streaming:
+    behavior: classical
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/GlobalMedia/GlobalMedia_Classical.yaml
+    interval: 86400
+  Global:
+    behavior: classical
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Global/Global_Classical.yaml
+    interval: 86400
+
+rules:
+  - RULE-SET,ShuntCorrection,DIRECT
+  - RULE-SET,Direct,DIRECT
+  - RULE-SET,AdvertisingLite,REJECT
+  - RULE-SET,Hijacking,REJECT
+  - RULE-SET,Privacy,REJECT
+  - RULE-SET,Spotify,Spotify服务
+  - RULE-SET,Microsoft,Bing服务
+  - RULE-SET,Microsoft,微软服务
+  - RULE-SET,Google,谷歌服务
+  - RULE-SET,Streaming,全球策略
+  - RULE-SET,Global,全球策略
+  - GEOIP,CN,DIRECT
+  - MATCH,全球策略
