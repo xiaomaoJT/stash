@@ -1,0 +1,205 @@
+dns:
+  default-nameserver:
+    - 114.114.115.115
+    - 119.28.28.28
+    - 223.6.6.6
+    - system
+  nameserver:
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
+log-level: info
+mode: rule
+proxy-groups:
+  - icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Proxy.png
+    name: 选择代理
+    proxies:
+      - 自动选择
+      - 手动选择
+      - HK 香港
+      - TW 台湾
+      - SG 新加坡
+      - JP 日本
+      - US 美国
+      - DIRECT
+    type: select
+  - icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Netflix.png
+    name: Netflix
+    proxies:
+      - 自动选择
+      - 手动选择
+      - HK 香港
+      - TW 台湾
+      - SG 新加坡
+      - JP 日本
+      - US 美国
+      - DIRECT
+    type: select
+  - icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Disney%2B.png
+    name: Disney+
+    proxies:
+      - 自动选择
+      - 手动选择
+      - HK 香港
+      - TW 台湾
+      - SG 新加坡
+      - JP 日本
+      - US 美国
+      - DIRECT
+    type: select
+  - icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Spotify.png
+    name: Spotify
+    proxies:
+      - 自动选择
+      - 手动选择
+      - HK 香港
+      - TW 台湾
+      - SG 新加坡
+      - JP 日本
+      - US 美国
+      - DIRECT
+    type: select
+  - icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/YouTube.png
+    name: YouTube
+    proxies:
+      - 自动选择
+      - 手动选择
+      - HK 香港
+      - TW 台湾
+      - SG 新加坡
+      - JP 日本
+      - US 美国
+      - DIRECT
+    type: select
+  - icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Speedtest.png
+    name: Speedtest
+    proxies:
+      - 自动选择
+      - 手动选择
+      - HK 香港
+      - TW 台湾
+      - SG 新加坡
+      - JP 日本
+      - US 美国
+      - DIRECT
+    type: select
+  - icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Final.png
+    name: 默认
+    proxies:
+      - 选择代理
+      - DIRECT
+    type: select
+  - filter: "港|\U0001F1ED\U0001F1F0|HK|(?i)Hong"
+    icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Hong_Kong.png
+    include-all: true
+    interval: 120
+    lazy: true
+    name: HK 香港
+    tolerance: 50
+    type: url-test
+  - filter: "台|\U0001F1E8\U0001F1F3|\U0001F1F9\U0001F1FC|湾|TW|(?i)Taiwan"
+    icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Taiwan.png
+    include-all: true
+    interval: 120
+    lazy: true
+    name: TW 台湾
+    tolerance: 50
+    type: url-test
+  - filter: "新加坡|坡|狮城|\U0001F1F8\U0001F1EC|SG|(?i)Singapore"
+    icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Singapore.png
+    include-all: true
+    interval: 120
+    lazy: true
+    name: SG 新加坡
+    tolerance: 50
+    type: url-test
+  - filter: "日|\U0001F1EF\U0001F1F5|东京|JP|(?i)Japan"
+    icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Japan.png
+    include-all: true
+    interval: 120
+    lazy: true
+    name: JP 日本
+    tolerance: 50
+    type: url-test
+  - filter: "美|\U0001F1FA\U0001F1F2|US|(?i)States|American"
+    icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/United_States.png
+    include-all: true
+    interval: 120
+    lazy: true
+    name: US 美国
+    tolerance: 50
+    type: url-test
+  - icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Auto.png
+    include-all: true
+    interval: 120
+    lazy: true
+    name: 自动选择
+    tolerance: 50
+    type: url-test
+  - icon: https://fastly.jsdelivr.net/gh/Koolson/Qure/IconSet/mini/Static.png
+    include-all: true
+    interval: 120
+    lazy: true
+    name: 手动选择
+    type: select
+proxy-providers:
+  服务提供商-1:
+    interval: 600
+    url: https://getinfo.bigwatermelon.org/api/v1/client/subscribe?token=e698bbbe45a0392d49caf7b9e0f58829
+rules:
+  - SCRIPT,quic,REJECT
+  - GEOSITE,netflix,Netflix
+  - GEOSITE,disney,Disney+
+  - GEOSITE,spotify,Spotify
+  - GEOSITE,speedtest,Speedtest
+  - GEOSITE,github,选择代理
+  - IP-ASN,62014,选择代理,no-resolve
+  - IP-ASN,59930,选择代理,no-resolve
+  - IP-ASN,44907,选择代理,no-resolve
+  - IP-ASN,211157,选择代理,no-resolve
+  - PROCESS-NAME,Telegram.exe,选择代理
+  - PROCESS-NAME,Telegram,选择代理
+  - GEOSITE,telegram,选择代理
+  - GEOSITE,youtube,YouTube
+  - GEOSITE,google,选择代理
+  - GEOSITE,twitter,选择代理
+  - DOMAIN-SUFFIX,tapbots.com,选择代理
+  - GEOSITE,instagram,选择代理
+  - GEOSITE,facebook,选择代理
+  - GEOSITE,steam@cn,DIRECT
+  - GEOSITE,steam,选择代理
+  - DOMAIN-SUFFIX,iphone-ld.apple.com,DIRECT
+  - DOMAIN-SUFFIX,lcdn-locator.apple.com,DIRECT
+  - DOMAIN-SUFFIX,lcdn-registration.apple.com,DIRECT
+  - DOMAIN-SUFFIX,push.apple.com,DIRECT
+  - PROCESS-NAME,trustd,选择代理
+  - GEOSITE,microsoft@cn,DIRECT
+  - GEOSITE,microsoft,选择代理
+  - GEOSITE,xbox,选择代理
+  - PROCESS-NAME,v2ray,DIRECT
+  - PROCESS-NAME,Surge,DIRECT
+  - PROCESS-NAME,ss-local,DIRECT
+  - PROCESS-NAME,privoxy,DIRECT
+  - PROCESS-NAME,trojan,DIRECT
+  - PROCESS-NAME,trojan-go,DIRECT
+  - PROCESS-NAME,naive,DIRECT
+  - PROCESS-NAME,CloudflareWARP,DIRECT
+  - PROCESS-NAME,Cloudflare WARP,DIRECT
+  - IP-CIDR,162.159.193.0/24,DIRECT,no-resolve
+  - PROCESS-NAME,p4pclient,DIRECT
+  - PROCESS-NAME,Thunder,DIRECT
+  - PROCESS-NAME,DownloadService,DIRECT
+  - PROCESS-NAME,qbittorrent,DIRECT
+  - PROCESS-NAME,Transmission,DIRECT
+  - PROCESS-NAME,fdm,DIRECT
+  - PROCESS-NAME,aria2c,DIRECT
+  - PROCESS-NAME,Folx,DIRECT
+  - PROCESS-NAME,NetTransport,DIRECT
+  - PROCESS-NAME,uTorrent,DIRECT
+  - PROCESS-NAME,WebTorrent,DIRECT
+  - GEOIP,LAN,DIRECT
+  - GEOIP,CN,DIRECT
+  - MATCH,默认
+script:
+  shortcuts:
+    quic: network == 'udp' and dst_port == 443
+subscribe-url: http://your-service-provider
