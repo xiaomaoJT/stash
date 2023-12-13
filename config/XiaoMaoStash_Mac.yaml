@@ -1,0 +1,186 @@
+mode: rule
+log-level: info
+http:
+  mitm:
+    - "api-overmind.youdao.com"
+  force-http-engine:
+    - "*:80"
+  url-rewrite:
+    - https:\/\/fanyi\.youdao\.com\/indexLLM.html https://fanyi.youdao.com/index.html 302
+  script:
+    - match: https:\/\/api-overmind\.youdao\.com\/openapi\/get\/luna\/dict\/dict-common-config\/prod\/(translateMainPageBanner|translateMainPagePopup)
+      name: you-dao-script
+      type: response # request / response
+      require-body: true
+      timeout: 20
+      argument: ""
+      binary-mode: false
+      max-size: 1048576 # 1MB
+
+script-providers:
+  you-dao-script:
+    url: https://raw.githubusercontent.com/xiaomaoJT/QxScript/main/rewrite/script/js/youdao.js
+    interval: 86400
+
+hosts:
+  "*.clash.dev": 127.0.0.1
+  ".dev": 127.0.0.1
+  "alpha.clash.dev": "::1"
+
+dns:
+  default-nameserver:
+    - 223.5.5.5
+    - 114.114.114.114
+    - system
+  nameserver:
+    # 不建议配置超过 2 个 DNS 服务器，会增加系统功耗
+    - https://doh.pub/dns-query
+    - https://dns.alidns.com/dns-query
+    - system
+
+  # 跳过证书验证，解决部分兼容性问题 https://help.nextdns.io/t/g9hdkjz
+  skip-cert-verify: true
+
+  # 对部分域名使用单独的 DNS 服务器
+  nameserver-policy:
+    "www.baidu.com": 114.114.114.114
+    "+.internal.crop.com": system
+
+  # 在以下列表的域名将不会被解析为 fake ip，这些域名相关的解析请求将会返回它们真实的 IP 地址
+  fake-ip-filter:
+    # Stun Services
+    - "+.stun.*.*"
+    - "+.stun.*.*.*"
+    - "+.stun.*.*.*.*"
+    - "+.stun.*.*.*.*.*"
+
+    # Google Voices
+    - "lens.l.google.com"
+
+    # Nintendo Switch
+    - "*.n.n.srv.nintendo.net"
+
+    # PlayStation
+    - "+.stun.playstation.net"
+
+    # XBox
+    - "xbox.*.*.microsoft.com"
+    - "*.*.xboxlive.com"
+
+    # Microsoft
+    - "*.msftncsi.com"
+    - "*.msftconnecttest.com"
+
+    # Bilibili CDN
+    - "*.mcdn.bilivideo.cn"
+
+proxies:
+
+proxy-groups:
+  - icon: https://raw.githubusercontent.com/xiaomaoJT/QxScript/main/lazy/icon/Final.png
+    name: 全球策略
+    proxies:
+      - 自动节点
+      - 手动节点
+      - 香港节点
+      - 台湾节点
+      - 日本节点
+      - 新加坡节点
+      - 美国节点
+      - 韩国节点
+      - 英国节点
+      - DIRECT
+    type: select
+  - filter: "🇭🇰|港|HK|(?i)Hong"
+    icon: https://raw.githubusercontent.com/xiaomaoJT/QxScript/main/lazy/icon/city/u/HK.png
+    include-all: true
+    interval: 2400
+    lazy: true
+    name: 香港节点
+    tolerance: 50
+    type: url-test
+  - filter: "台|TW|(?i)Taiwan"
+    icon: https://raw.githubusercontent.com/xiaomaoJT/QxScript/main/lazy/icon/city/u/CN.png
+    include-all: true
+    interval: 2400
+    lazy: true
+    name: 台湾节点
+    tolerance: 50
+    type: url-test
+  - filter: "🇯🇵|日本|JP|(?i)Japan"
+    icon: https://raw.githubusercontent.com/xiaomaoJT/QxScript/main/lazy/icon/city/u/JP.png
+    include-all: true
+    interval: 2400
+    lazy: true
+    name: 日本节点
+    tolerance: 50
+    type: url-test
+  - filter: "🇸🇬|新加坡|狮城|SG|(?i)Singapore"
+    icon: https://raw.githubusercontent.com/xiaomaoJT/QxScript/main/lazy/icon/city/u/SG.png
+    include-all: true
+    interval: 2400
+    lazy: true
+    name: 新加坡节点
+    tolerance: 50
+    type: url-test
+  - filter: "🇺🇸|美国|美國|US|洛杉矶|西雅图|(?i)States|American"
+    icon: https://raw.githubusercontent.com/xiaomaoJT/QxScript/main/lazy/icon/city/u/US.png
+    include-all: true
+    interval: 2400
+    lazy: true
+    name: 美国节点
+    tolerance: 50
+    type: url-test
+  - filter: "🇰🇷|KR|Korea|KOR|首尔|韩|韓|(?i)Korea"
+    icon: https://raw.githubusercontent.com/xiaomaoJT/QxScript/main/lazy/icon/city/u/KR.png
+    include-all: true
+    interval: 2400
+    lazy: true
+    name: 韩国节点
+    tolerance: 50
+    type: url-test
+  - filter: "🇬🇧|英|英国|英國|大不列颠及北爱尔兰联合王国|联合王国|伦敦|UK|(?i)Britain|United Kingdom"
+    icon: https://raw.githubusercontent.com/xiaomaoJT/QxScript/main/lazy/icon/city/u/UK.png
+    include-all: true
+    interval: 2400
+    lazy: true
+    name: 英国节点
+    tolerance: 50
+    type: url-test
+
+  - icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Auto.png
+    include-all: true
+    interval: 2400
+    lazy: true
+    name: 自动节点
+    tolerance: 50
+    type: url-test
+  - icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Available.png
+    include-all: true
+    interval: 2400
+    lazy: true
+    name: 手动节点
+    type: select
+
+
+# 这里是订阅 请换上自己的
+proxy-providers:
+  XiaoMao-Stash:
+    interval: 4800
+    url: XXXXX订阅地址XXXXXX可使用substore地址XXXXX
+
+rule-providers:
+  ShuntCorrection:
+    behavior: classical
+    url: https://raw.githubusercontent.com/xiaomaoJT/QxScript/main/filter/ShuntCorrection.yaml
+    interval: 86400
+  AdvertisingLite:
+    behavior: classical
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AdvertisingLite/AdvertisingLite_Classical.yaml
+    interval: 86400
+
+rules:
+  - RULE-SET,ShuntCorrection,DIRECT
+  - RULE-SET,AdvertisingLite,REJECT
+  - GEOIP,CN,DIRECT
+  - MATCH,全球策略
